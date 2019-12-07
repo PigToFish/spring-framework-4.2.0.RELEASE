@@ -35,6 +35,13 @@ import org.springframework.beans.BeansException;
  * definitions, but never bean instances. Doing so may cause premature bean
  * instantiation, violating the container and causing unintended side-effects.
  * If bean instance interaction is required, consider implementing
+ *
+ * 允许对应用上下文中的bean定义进行自定义的修改，以适应上下文底层bean工厂的bean属性值
+ * 应用上下文可以自动检测BeanFactoryPostProcessor的bean定义，在其他bean创建之前应用BeanFactoryPostProcessor。
+ * 可以用于自定义配置文件以便配置上下文中的bean属性
+ * 查看PropertyResourceConfigurer以及具体的实现了解配置需要的解决方案
+ * BeanFactoryPostProcessor可以和bean定义交互以及修改bean定义，但是不能实例化bean。否则会导致过早实例化，违反容器规则引起意外的副作用。如果需要和bean示例交互，可以考虑使用BeanPostProcessor来替代。
+ *
  * {@link BeanPostProcessor} instead.
  *
  * @author Juergen Hoeller
