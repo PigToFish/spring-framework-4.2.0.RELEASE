@@ -125,7 +125,9 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 		try {
 			DefaultListableBeanFactory beanFactory = createBeanFactory();
 			beanFactory.setSerializationId(getId());
+			//设置BeanFactory定制化信息：允许bean定义重载（allowBeanDefinitionOverriding）、允许循环引用
 			customizeBeanFactory(beanFactory);
+			//默认执行XmlWebApplicationContext的bean配置加载
 			loadBeanDefinitions(beanFactory);
 			synchronized (this.beanFactoryMonitor) {
 				this.beanFactory = beanFactory;

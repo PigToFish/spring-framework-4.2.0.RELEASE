@@ -230,6 +230,40 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 * @return an instance of the bean
 	 * @throws BeansException if the bean could not be created
 	 */
+	/**
+	 * （1）获取bean所对应clazz的构造函数
+	 * （2）构造函数先执行静态字段的初始化，然后按照属性字段声明顺序执行初始化
+	 * （3）调用各个MergedBeanDefinitionPostProcessor后处理器的postProcessMergedBeanDefinition
+	 *     进行信息合并处理。
+	 * （4）在容器中为bean 添加一个单指定的单例工厂
+	 * （5）调用各个InstantiationAwareBeanPostProcessor后处理器的postProcessAfterInstantiation
+	 * （6）调用autowireByName方法处理通过autowire设置为byName的属性字段: xml 中bean的autowire指定
+	 * （7）调用autowireByType方法处理通过autowire设置为byType的属性字段 ：xml 中bean的autowire指定
+	 * （8）若有实例化感知后处理器InstantiationAwareBeanPostProcessor，则调用postProcessPropertyValues
+	 * 		进行处理：更新beanFactory的设置
+	 * （9）若有bean属性值依赖检查，则进行检查：依赖性检查属性可以是协作对象bean，简单类型或全部
+	 * （10）调用applyPropertyValues方法对MutablePropertyValues可变属性-复杂对象进行设值，涉及到属性值
+	 * 	依赖注入，主要是xml中的bean配置, 例如PropertyPlaceholderConfigurer::propertyConfigurer配置，
+	 * 	 <bean id="propertyConfigurer"
+	 * 	 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	 *    		 <property name="ignoreUnresolvablePlaceholders" value="true"/>
+	 *     	<property name="properties" ref="propertiesFactoryBean"/>
+	 *      </bean>
+	 *
+	 *      <bean id="propertiesFactoryBean"
+	 *       class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+	 *     		<property name="ignoreResourceNotFound" value="true"/>
+	 *    			<property name="locations">
+	 *       		  <list>
+	 *             	<value>classpath*:production.properties</value>
+	 *        	     </list>
+	 *     	   </property>
+	 *     </bean>
+	 * 	在这一阶段会解析property配置文件。
+	 * （11）调用bean初始化之前的后处理器的postProcessBeforeInitialization方法对初始化(@postContruct、@preDestroy标注方法)方法进行处理调用
+	 * （12）调用初始化方法afterPropertiesSet()：bean是实现了InitializingBean
+	 * （13）调用bean初始化之后的后处理器，一般是没有操作，直接返回
+	 */
 	@SuppressWarnings("unchecked")
 	protected <T> T doGetBean(
 			final String name, final Class<T> requiredType, final Object[] args, boolean typeCheckOnly)
